@@ -6,7 +6,7 @@ The environment is built around **OPNsense**, **Proxmox**, **TrueNAS**, and segm
 
 ## Architecture
 
-![Homelab network architecture](diagrams/network-architecture.png)
+![Homelab network architecture](diagrams/network-architecture.svg)
 
 ### Physical Topology
 
