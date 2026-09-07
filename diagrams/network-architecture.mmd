@@ -1,0 +1,43 @@
+flowchart TD
+    Internet["Internet"]
+    Modem["Cable Modem"]
+    Firewall["Sophos XG 125 Rev.3<br/>OPNsense"]
+    Core["D-Link DGS-1210-24P<br/>Managed Switch"]
+
+    Internet --> Modem
+    Modem -->|WAN| Firewall
+    Firewall --> Core
+
+    subgraph Personal["Personal Network<br/>192.168.1.0/24"]
+        PersonalSwitch["1 GbE Unmanaged Switch"]
+        Desktop["Desktop"]
+        AP["Netgear Router<br/>AP Mode"]
+        PersonalSwitch --> Desktop
+        PersonalSwitch --> AP
+    end
+
+    subgraph Servers["Server VLAN<br/>10.0.30.0/24"]
+        ServerSwitch["2.5 GbE Unmanaged Switch"]
+        ZimaBoard["ZimaBoard<br/>Proxmox"]
+        EliteDesk["HP EliteDesk Mini<br/>Proxmox"]
+        ZimaBlade["ZimaBlade<br/>TrueNAS"]
+        Frigate["Frigate NVR"]
+        ServerSwitch --> ZimaBoard
+        ServerSwitch --> EliteDesk
+        ServerSwitch --> ZimaBlade
+        EliteDesk -. hosts .-> Frigate
+    end
+
+    subgraph Cameras["Camera VLAN<br/>10.0.11.0/24"]
+        CameraSwitch["1 GbE Unmanaged Switch"]
+        CameraGroup["Wired IP Cameras"]
+        CameraSwitch --> CameraGroup
+    end
+
+    Core --> PersonalSwitch
+    Core --> ServerSwitch
+    Core --> CameraSwitch
+
+    Personal -. "Allowed to access servers" .-> Servers
+    CameraGroup -. "Video streams" .-> Frigate
+    Firewall -. "Camera Internet restricted" .-> Cameras
